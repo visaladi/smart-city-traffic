@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: smart-city-traffic
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.kafka: INFO
+    com.example.smart_city_traffic: DEBUG

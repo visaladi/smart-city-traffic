@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart City Traffic Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: #2d3436;
+            padding: 15px;
+            color: white;
+            text-align: center;
+            font-size: 22px;
+        }
+
+        .container {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0px 2px 6px rgba(0,0,0,0.15);
+        }
+
+        .btn {
+            background: #0984e3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: #74b9ff;
+        }
+
+        input, select {
+            padding: 10px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        #logBox {
+            background: black;
+            color: #00ff9d;
+            padding: 10px;
+            border-radius: 8px;
+            height: 220px;
+            overflow-y: scroll;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>Smart City Traffic - Kafka Event Producer</header>
+
+<div class="container">
+
+    <!-- RANDOM EVENT SECTION -->
+    <div class="card">
+        <h2>Send Random Event</h2>
+        <button class="btn" onclick="sendRandom()">Send Random Traffic Event</button>
+    </div>
+
+    <!-- CUSTOM EVENT SECTION -->
+    <div class="card">
+        <h2>Send Custom Traffic Event</h2>
+
+        <label>Sensor ID</label>
+        <input id="sensorId" placeholder="Example: J1">
+
+        <label>Vehicle Count</label>
+        <input id="vehicleCount" type="number" placeholder="Example: 42">
+
+        <label>Average Speed (km/h)</label>
+        <input id="avgSpeed" type="number" placeholder="Example: 35.8">
+
+        <button class="btn" onclick="sendCustom()">Send Custom Event</button>
+    </div>
+
+    <!-- LOG VIEWER -->
+    <div class="card">
+        <h2>Live Event Logs</h2>
+        <div id="logBox"></div>
+    </div>
+
+</div>
+
+<script>
+    const API_BASE = "http://localhost:8080/api/traffic";
+
+    function logMessage(msg) {
+        const box = document.getElementById("logBox");
+        box.innerHTML += "> " + msg + "<br>";
+        box.scrollTop = box.scrollHeight;
+    }
+
+    async function sendRandom() {
+        try {
+            const response = await fetch(`${API_BASE}/send-random`, {
+                method: "POST"
+            });
+
+            const data = await response.json();
+            logMessage("Random Event Sent: " + JSON.stringify(data));
+        } catch (err) {
+            logMessage("ERROR: " + err);
+        }
+    }
+
+    async function sendCustom() {
+        const event = {
+            sensorId: document.getElementById("sensorId").value,
+            vehicleCount: parseInt(document.getElementById("vehicleCount").value),
+            avgSpeed: parseFloat(document.getElementById("avgSpeed").value),
+            timestamp: new Date().toISOString()
+        };
+
+        try {
+            const response = await fetch(`${API_BASE}/send`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(event)
+            });
+
+            const data = await response.json();
+            logMessage("Custom Event Sent: " + JSON.stringify(data));
+        } catch (err) {
+            logMessage("ERROR: " + err);
+        }
+    }
+</script>
+
+</body>
+</html>

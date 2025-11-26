@@ -2,16 +2,19 @@ package com.example.smart_city_traffic.controller;
 
 import com.example.smart_city_traffic.model.SensorEvent;
 import com.example.smart_city_traffic.service.TrafficProducerService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/traffic")
-@RequiredArgsConstructor
 public class TrafficController {
 
     private final TrafficProducerService trafficProducerService;
+
+    // Constructor injection (no Lombok)
+    public TrafficController(TrafficProducerService trafficProducerService) {
+        this.trafficProducerService = trafficProducerService;
+    }
 
     // Manually trigger sending one random event
     @PostMapping("/send-random")

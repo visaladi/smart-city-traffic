@@ -1,21 +1,28 @@
 package com.example.smart_city_traffic.scheduler;
 
+import com.example.smart_city_traffic.model.SensorEvent;
 import com.example.smart_city_traffic.service.TrafficProducerService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
-@Slf4j
 public class TrafficScheduler {
+
+    private static final Logger log = LoggerFactory.getLogger(TrafficScheduler.class);
 
     private final TrafficProducerService trafficProducerService;
 
-    // Send an event every 1 second
-    @Scheduled(fixedRate = 1000)
-    public void sendSensorDataPeriodically() {
-        trafficProducerService.sendRandomEvent();
+    // ✅ Constructor injection (no Lombok)
+    public TrafficScheduler(TrafficProducerService trafficProducerService) {
+        this.trafficProducerService = trafficProducerService;
+    }
+
+    // ✅ Send a random event every 5 seconds
+    @Scheduled(fixedRateString = "${app.traffic.scheduler.interval-ms:5000}")
+    public void sendPeriodicRandomEvent() {
+        SensorEvent event = trafficProducerService.sendRandomEvent();
+        log.info("Scheduled RANDOM event sent: {}", event);
     }
 }

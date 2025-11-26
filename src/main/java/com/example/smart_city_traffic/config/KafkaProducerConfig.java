@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
-import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,12 +19,12 @@ public class KafkaProducerConfig {
     public ProducerFactory<String, SensorEvent> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
 
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092");
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        // Optional: disable type headers if you want simpler JSON
-        configProps.put(JsonSerializer.ADD_TYPE_INFO_HEADERS, false);
+        // Use our custom NON-DEPRECATED JSON serializer
+        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                JacksonKafkaSerializer.class);
 
         return new DefaultKafkaProducerFactory<>(configProps);
     }

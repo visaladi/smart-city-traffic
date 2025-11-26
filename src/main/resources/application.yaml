@@ -2,8 +2,22 @@ spring:
   application:
     name: smart-city-traffic
 
+  datasource:
+    url: jdbc:postgresql://localhost:5432/smart_city_traffic
+    username: postgres
+    password: 0956
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:29092
 
 server:
   port: 8080
